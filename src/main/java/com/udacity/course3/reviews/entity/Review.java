@@ -17,6 +17,13 @@ public class Review {
     @ManyToOne
     private Product product;
 
+    public Review(){};
+
+    public Review(int id){
+        this.id = id;
+    }
+
+    // SETTERS
     public void setId(Integer id) {
         this.id = id;
     }
@@ -33,6 +40,15 @@ public class Review {
         this.top_review = top_review;
     }
 
+    public void setProduct(Product product) {
+        this.product = product;
+    }
+
+    // GETTERS
+    public Product getProduct() {
+        return product;
+    }
+
     public Integer getId() {
         return id;
     }
@@ -47,5 +63,16 @@ public class Review {
 
     public boolean isTop_review() {
         return top_review;
+    }
+
+    @Override
+    public String toString(){
+        return "Review{" +
+                "id = " + id +
+                ", title = '" + title + '\'' +
+                ", reviewText = '" + review_txt + '\'' +
+                ", recommended = " + top_review +
+                ", product = " + product +
+                '}';
     }
 }

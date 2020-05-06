@@ -12,12 +12,17 @@ import javax.persistence.Id;
 @Entity
 public class Product {
 
-    @javax.persistence.Id
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer Id;
-
+    private Integer id;
     private String name;
     private String description;
+
+    public Product(){};
+
+    public Product(Integer id) {
+        this.id = id;
+    }
 
     /**
      * @param description the description to set
@@ -30,7 +35,7 @@ public class Product {
      * @param id the id to set
      */
     public void setId(Integer id) {
-        Id = id;
+        id = id;
     }
 
     /**
@@ -51,7 +56,7 @@ public class Product {
      * @return the id
      */
     public Integer getId() {
-        return Id;
+        return id;
     }
 
     /**
@@ -59,6 +64,15 @@ public class Product {
      */
     public String getName() {
         return name;
+    }
+
+    @Override
+    public String toString() {
+        return "Product {" +
+                "id = " + id +
+                ", name = '" + name + '\'' +
+                ", description = '" + description + '\'' +
+                '}';
     }
 
 }

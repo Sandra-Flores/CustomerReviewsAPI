@@ -1,7 +1,5 @@
 package com.udacity.course3.reviews.entity;
 
-import jdk.jfr.Enabled;
-
 import javax.persistence.*;
 
 @Entity
@@ -19,8 +17,13 @@ public class Comment {
 
     public Comment(){};
 
-    public Comment(int id){
+    public Comment(Integer id){
         this.id = id;
+    }
+
+    public Comment(String title, String comment_txt, Integer reviewId){
+        this.title = title;
+        this.comment_txt = comment_txt;
     }
 
     // SETTERS

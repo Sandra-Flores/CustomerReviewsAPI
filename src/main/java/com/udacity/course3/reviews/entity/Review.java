@@ -12,15 +12,21 @@ public class Review {
 
     private String title;
     private String review_txt;
-    private boolean top_review;
+    private boolean is_top_review;
 
     @ManyToOne
     private Product product;
 
     public Review(){};
 
-    public Review(int id){
+    public Review(Integer id){
         this.id = id;
+    }
+
+    public Review(String title, String review_txt, Integer productId){
+        this.title = title;
+        this.review_txt = review_txt;
+        this.id = productId;
     }
 
     // SETTERS
@@ -36,8 +42,8 @@ public class Review {
         this.review_txt = review_txt;
     }
 
-    public void setTop_review(boolean top_review) {
-        this.top_review = top_review;
+    public void setTop_review(boolean is_top_review) {
+        this.is_top_review = is_top_review;
     }
 
     public void setProduct(Product product) {
@@ -62,7 +68,7 @@ public class Review {
     }
 
     public boolean isTop_review() {
-        return top_review;
+        return is_top_review;
     }
 
     @Override
@@ -71,7 +77,7 @@ public class Review {
                 "id = " + id +
                 ", title = '" + title + '\'' +
                 ", reviewText = '" + review_txt + '\'' +
-                ", recommended = " + top_review +
+                ", recommended = " + is_top_review +
                 ", product = " + product +
                 '}';
     }

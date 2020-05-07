@@ -1,9 +1,6 @@
 package com.udacity.course3.reviews.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 /**
  * Product
@@ -22,6 +19,11 @@ public class Product {
 
     public Product(Integer id) {
         this.id = id;
+    }
+
+    public Product(String name, String description){
+        this.name = name;
+        this.description = description;
     }
 
     /**

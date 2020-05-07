@@ -6,6 +6,7 @@ import com.udacity.course3.reviews.repository.ProductRepository;
 import com.udacity.course3.reviews.repository.ReviewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpServerErrorException;
@@ -24,7 +25,7 @@ public class ReviewsController {
     private ProductRepository productRepository;
 
     @Autowired
-    public ReviewsController(ReviewRepository reviewRepository, ProductRepository productRepository){
+    ReviewsController(ReviewRepository reviewRepository, ProductRepository productRepository){
         this.reviewRepository = reviewRepository;
         this.productRepository = productRepository;
     }
@@ -40,7 +41,7 @@ public class ReviewsController {
      * @param productId The id of the product.
      * @return The created review or 404 if product id is not found.
      */
-    @RequestMapping(value = "/reviews/products/{productId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/reviews/products/{productId}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Review> createReviewForProduct(@PathVariable("productId") Integer productId, @RequestBody Review review) {
         Optional<Product> optionalProduct = productRepository.findById(productId);
 
@@ -58,7 +59,7 @@ public class ReviewsController {
      * @param productId The id of the product.
      * @return The list of reviews.
      */
-    @RequestMapping(value = "/reviews/products/{productId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/reviews/products/{productId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Review>> listReviewsForProduct(@PathVariable("productId") Integer productId) {
 
         Optional<Product> optionalProduct = productRepository.findById(productId);

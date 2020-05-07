@@ -6,6 +6,7 @@ import com.udacity.course3.reviews.repository.CommentRepository;
 import com.udacity.course3.reviews.repository.ReviewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpServerErrorException;
@@ -26,7 +27,7 @@ public class CommentsController {
     private ReviewRepository reviewRepository;
 
     @Autowired
-    public CommentsController(CommentRepository commentRepository, ReviewRepository reviewRepository) {
+    CommentsController(CommentRepository commentRepository, ReviewRepository reviewRepository) {
         this.commentRepository = commentRepository;
         this.reviewRepository = reviewRepository;
     }
@@ -41,7 +42,7 @@ public class CommentsController {
      *
      * @param reviewId The id of the review.
      */
-    @RequestMapping(value = "/reviews/{reviewId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/reviews/{reviewId}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Comment> createCommentForReview(@PathVariable("reviewId") Integer reviewId, @RequestBody Comment comment) {
 
         Optional<Review> optionalReview = reviewRepository.findById(reviewId);
@@ -63,11 +64,11 @@ public class CommentsController {
      *
      * @param reviewId The id of the review.
      */
-    @RequestMapping(value = "/reviews/{reviewId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/reviews/{reviewId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Comment>> listCommentsForReview(@PathVariable("reviewId") Integer reviewId) {
         Optional<Review> optionalReview = reviewRepository.findById(reviewId);
 
-        if(optionalReview.isPresent()){
+        if(!optionalReview.isPresent()){
             return ResponseEntity.notFound().build();
         }
         else

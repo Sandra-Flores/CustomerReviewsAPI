@@ -1,8 +1,9 @@
 package com.udacity.course3.reviews.controller;
 
-import com.udacity.course3.reviews.entity.Comment;
-import com.udacity.course3.reviews.entity.Review;
+import com.udacity.course3.reviews.entity.*;
 import com.udacity.course3.reviews.repository.CommentRepository;
+import com.udacity.course3.reviews.repository.MongoCommentRepository;
+import com.udacity.course3.reviews.repository.MongoReviewRepository;
 import com.udacity.course3.reviews.repository.ReviewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpServerErrorException;
 
+import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletionException;
@@ -23,13 +26,17 @@ import java.util.concurrent.CompletionException;
 public class CommentsController {
 
     //Wire needed JPA repositories
-    private CommentRepository commentRepository;
-    private ReviewRepository reviewRepository;
+    @Autowired private CommentRepository commentRepository;
+    @Autowired private ReviewRepository reviewRepository;
+    @Autowired private MongoReviewRepository mongoReviewRepository;
+    @Autowired private MongoCommentRepository mongoCommentRepository;
 
-    @Autowired
-    CommentsController(CommentRepository commentRepository, ReviewRepository reviewRepository) {
+    CommentsController(CommentRepository commentRepository, ReviewRepository reviewRepository,
+                       MongoReviewRepository mongoReviewRepository, MongoCommentRepository mongoCommentRepository) {
         this.commentRepository = commentRepository;
         this.reviewRepository = reviewRepository;
+        this.mongoCommentRepository = mongoCommentRepository;
+        this.mongoReviewRepository = mongoReviewRepository;
     }
 
     /**
@@ -43,13 +50,21 @@ public class CommentsController {
      * @param reviewId The id of the review.
      */
     @RequestMapping(value = "/reviews/{reviewId}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Comment> createCommentForReview(@PathVariable("reviewId") Integer reviewId, @RequestBody Comment comment) {
+    public ResponseEntity<MongoComment> createCommentForReview(@Valid @PathVariable("reviewId") Integer reviewId, @RequestBody Comment comment) {
 
-        Optional<Review> optionalReview = reviewRepository.findById(reviewId);
+        Optional<Review> optReview = reviewRepository.findById(reviewId);
+        Optional<MongoReview> optMongoReview = mongoReviewRepository.findById(reviewId);
+        MongoComment mongoComment;
 
-        if(optionalReview.isPresent()){
-            comment.setReview(optionalReview.get());
-            return ResponseEntity.ok(commentRepository.save(comment));
+        if(optMongoReview.isPresent()){
+            comment.setReview(optReview.get());
+            comment = commentRepository.save(comment);
+
+            mongoComment = new MongoComment(comment.getTitle(), comment.getComment_txt(), comment.getId());
+            optMongoReview.get().addComment(mongoComment);
+
+            return ResponseEntity.ok(mongoCommentRepository.save(mongoComment));
+
         }
         else
             return ResponseEntity.notFound().build();
@@ -65,13 +80,9 @@ public class CommentsController {
      * @param reviewId The id of the review.
      */
     @RequestMapping(value = "/reviews/{reviewId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Comment>> listCommentsForReview(@PathVariable("reviewId") Integer reviewId) {
-        Optional<Review> optionalReview = reviewRepository.findById(reviewId);
+    public ResponseEntity<List<MongoComment>> listCommentsForReview(@Valid@PathVariable("reviewId") Integer reviewId) {
+        Optional<MongoReview> optionalMongoReview = mongoReviewRepository.findById(reviewId);
 
-        if(!optionalReview.isPresent()){
-            return ResponseEntity.notFound().build();
-        }
-        else
-            return ResponseEntity.ok(commentRepository.findAllByReview(new Review(reviewId)));
+        return optionalMongoReview.map(mongoReview -> ResponseEntity.ok(optionalMongoReview.get().getCommentList())).orElseGet(() -> ResponseEntity.notFound().build());
     }
 }

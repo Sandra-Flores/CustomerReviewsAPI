@@ -1,19 +1,18 @@
 package com.udacity.course3.reviews.entity;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
-@Entity
 public class MongoReview {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
     private String title;
     private String review_txt;
     private boolean is_top_review;
-    private List<MongoComment> CommentsList;
+
+    private List<MongoComment> commentList = new ArrayList<>();
 
     public MongoReview(){};
 
@@ -44,6 +43,8 @@ public class MongoReview {
         this.is_top_review = is_top_review;
     }
 
+    public void addComment(MongoComment comment){this.commentList.add(comment);}
+
     // GETTERS
     public Integer getId() {
         return id;
@@ -61,10 +62,12 @@ public class MongoReview {
         return is_top_review;
     }
 
+    public List<MongoComment> getCommentList(){ return commentList;}
+
     @Override
     public String toString(){
         return String.format(
-                "Review[id=%s, title='%s', review_txt='%s', is_top_review='%s',]",
+                "Review[id=%s, title='%s', review_txt='%s', is_top_review='%s']",
                 id, title, review_txt, is_top_review);
     }
 }

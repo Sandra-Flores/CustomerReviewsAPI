@@ -2,18 +2,12 @@ package com.udacity.course3.reviews.entity;
 
 import javax.persistence.*;
 
-@Entity
 public class MongoComment {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
     private String title;
     private String comment_txt;
-
-    @ManyToOne
-    private Review review;
 
     public MongoComment(){};
 
@@ -24,6 +18,7 @@ public class MongoComment {
     public MongoComment(String title, String comment_txt, Integer reviewId){
         this.title = title;
         this.comment_txt = comment_txt;
+        this.id = reviewId;
     }
 
     // SETTERS
@@ -39,10 +34,6 @@ public class MongoComment {
         this.comment_txt = comment_txt;
     }
 
-    public void setReview(Review review) {
-        this.review = review;
-    }
-
     // GETTERS
     public Integer getId() {
         return id;
@@ -56,14 +47,10 @@ public class MongoComment {
         return comment_txt;
     }
 
-    public Review getReview() {
-        return review;
-    }
-
     @Override
     public String toString(){
         return String.format(
-                "Comment[id=%s, title='%s', comment_txt='%s',]",
+                "Comment[id=%s, title='%s', comment_txt='%s']",
                 id, title, comment_txt);
 
     }
